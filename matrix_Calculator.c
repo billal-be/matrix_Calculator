@@ -287,6 +287,7 @@ void SubtractTwoMatricesMenu()
         mainMenu();
     }
 
+
     freeMatrix(&A, rows);
     freeMatrix(&B, rows);
     printf("The result:\n");
