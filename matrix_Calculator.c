@@ -16,6 +16,7 @@ float **addTwoMatrices(float **mat1, float **mat2, int rows, int cols);
 float **subtractTwoMatrices(float **mat1, float **mat2, int rows, int cols);
 float **multiplyTwoMatrices(float **mat1, float **mat2, int n, int m, int p);
 float **multiplyMatrixByScalar(float **mat, float k, int rows, int cols);
+double calculateDeterminant(float **matrix, int n);
 /*End Matrix Operations Section*/
 
 /*Start Menus Section*/
@@ -23,6 +24,7 @@ void addTwoMatricesMenu();
 void subtractTwoMatricesMenu();
 void multiplyTwoMatricesMenu();
 void multiplyMatrixByScalarMenu();
+void calculateDeterminantMenu();
 void mainMenu();
 
 /*End Menus Section*/
@@ -217,6 +219,57 @@ float **multiplyMatrixByScalar(float **mat, float k, int rows, int cols)
 
     return result;
 }
+
+double calculateDeterminant(float **matrix, int n)
+{
+    if (n == 1)
+    {
+        return matrix[0][0]; // Base case: If the matrix is 1×1, return the only element
+    }
+    if (n == 2)
+    {
+        // If the matrix is 2×2, use the direct formula
+        return (matrix[0][0] * matrix[1][1]) - (matrix[0][1] * matrix[1][0]);
+    }
+
+    float determinant = 0;
+
+    for (int col = 0; col < n; col++)
+    {
+        // Create a submatrix (Minor) by removing the first row and the current column
+        float **subMatrix = (float **)malloc((n - 1) * sizeof(float *));
+        for (int i = 0; i < n - 1; i++)
+        {
+            subMatrix[i] = (float *)malloc((n - 1) * sizeof(float));
+        }
+
+        // Fill the submatrix by excluding the first row and the selected column
+        for (int i = 1; i < n; i++)
+        {
+            int subCol = 0;
+            for (int j = 0; j < n; j++)
+            {
+                if (j == col)
+                    continue; // Skip the selected column
+                subMatrix[i - 1][subCol] = matrix[i][j];
+                subCol++;
+            }
+        }
+
+        // Apply Laplace expansion along the first row
+        float cofactor = (col % 2 == 0 ? 1 : -1) * matrix[0][col] * calculateDeterminant(subMatrix, n - 1);
+        determinant += cofactor;
+
+        // Free allocated memory for the submatrix
+        for (int i = 0; i < n - 1; i++)
+        {
+            free(subMatrix[i]);
+        }
+        free(subMatrix);
+    }
+
+    return determinant;
+}
 /*End Matrix Operations Section*/
 
 /*Start Menus Section*/
@@ -231,9 +284,9 @@ void mainMenu()
         printf("2. Subtract Two Matrices.\n");
         printf("3. Multiply Two Matrices\n");
         printf("4. Multiply a Matrix By a Scalar.\n");
-        printf("5. Find Determinant.\n");
-        printf("6. Find Transpose Matrix.\n");
-        printf("7. Find Inverse Matrix.\n");
+        printf("5. Calculate Determinant.\n");
+        printf("6. Calculate Transpose Matrix.\n");
+        printf("7. Calculate Inverse Matrix.\n");
         printf("8. Exit.\n");
         printf("Enter your choice: ");
         scanf("%d", &choice);
@@ -258,7 +311,7 @@ void mainMenu()
             multiplyMatrixByScalarMenu();
             break;
         case 5:
-            /* code */
+            calculateDeterminantMenu();
             break;
         case 6:
             /* code */
@@ -446,5 +499,32 @@ void multiplyMatrixByScalarMenu()
     printf("The result:\n");
     displayMatrix(result, rows, cols);
     freeMatrix(&result, rows);
+}
+
+void calculateDeterminantMenu()
+{
+    int n;
+    printf("\n**** Calculate Determinant ****\n");
+    printf("Det( A(n x n) )\n");
+    printf("Enter n (the size of the matrix A): ");
+    scanf("%d", &n);
+    while (n <= 0)
+    {
+        printf("n must be greater than 0: ");
+        scanf("%d", &n);
+    }
+
+    float **A = allocateMatrix(n, n);
+    if (A == NULL)
+    {
+        printf("Memory allocation failed!\n");
+        return;
+    }
+    printf("Fill the matrix A:\n");
+    fillMatrix(A, n, n, 'A');
+
+    double det = calculateDeterminant(A, n);
+    printf("Det( A ) = %.2f\n", det);
+    freeMatrix(&A, n);
 }
 /*End Menus Section*/
