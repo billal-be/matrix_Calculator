@@ -73,6 +73,12 @@ float **allocateMatrix(int rows, int cols)
         mat[i] = (float *)malloc(cols * sizeof(float));
         if (mat[i] == NULL)
         {
+            // Free all previously allocated memory before returning NULL
+            for (int j = 0; j < i; j++)
+            {
+                free(mat[j]);
+            }
+            free(mat);
             return NULL;
         }
     }
