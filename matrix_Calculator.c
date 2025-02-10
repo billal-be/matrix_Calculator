@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
-/*Srart Helper Functions Section*/
+/*Start Helper Functions Section*/
 void displayAsciiArt();
 void getMatrixSize(int *rows, int *cols);
 float **allocateMatrix(int rows, int cols);
@@ -13,12 +13,14 @@ void freeMatrix(float ***mat, int rows);
 
 /*Start Matrix Operations Section*/
 float **addTwoMatrices(float **mat1, float **mat2, int rows, int cols);
-float **SubtractTwoMatrices(float **mat1, float **mat2, int rows, int cols);
+float **subtractTwoMatrices(float **mat1, float **mat2, int rows, int cols);
+float **multiplyTwoMatrices(float **mat1, float **mat2, int n, int m, int p);
 /*End Matrix Operations Section*/
 
 /*Start Menus Section*/
 void addTwoMatricesMenu();
-void SubtractTwoMatricesMenu();
+void subtractTwoMatricesMenu();
+void multiplyTwoMatricesMenu();
 void mainMenu();
 
 /*End Menus Section*/
@@ -27,6 +29,7 @@ int main()
 {
     displayAsciiArt();
     mainMenu();
+    return 0;
 }
 
 /*Srart Helper Functions Section*/
@@ -81,6 +84,7 @@ float **allocateMatrix(int rows, int cols)
                 free(mat[j]);
             }
             free(mat);
+            mat = NULL;
             return NULL;
         }
     }
@@ -90,13 +94,17 @@ float **allocateMatrix(int rows, int cols)
 
 void fillMatrix(float **mat, int rows, int cols, char matName)
 {
-    char varName[10];
     for (int i = 0; i < rows; i++)
     {
         for (int j = 0; j < cols; j++)
         {
             printf("%c[%d][%d] : ", matName, i + 1, j + 1);
-            scanf("%f", &mat[i][j]);
+            if (scanf("%f", &mat[i][j]) != 1)
+            {
+                printf("Invalid input. Please enter a number.\n");
+                j--; // Retry input for the same element
+                while (getchar() != '\n'); // Clear input buffer
+            }
         }
     }
 }
@@ -144,7 +152,7 @@ float **addTwoMatrices(float **mat1, float **mat2, int rows, int cols)
     return mat3;
 }
 
-float **SubtractTwoMatrices(float **mat1, float **mat2, int rows, int cols)
+float **subtractTwoMatrices(float **mat1, float **mat2, int rows, int cols)
 {
     float **mat3 = allocateMatrix(rows, cols);
     if (mat3 == NULL)
@@ -162,6 +170,30 @@ float **SubtractTwoMatrices(float **mat1, float **mat2, int rows, int cols)
     }
     return mat3;
 }
+
+float **multiplyTwoMatrices(float **mat1, float **mat2, int n, int m, int p)
+{
+    float **mat3 = allocateMatrix(n, p);
+    if (mat3 == NULL)
+    {
+        printf("Memory allocation failed!\n");
+        return NULL;
+    }
+
+    for (int i = 0; i < n; i++)
+    {
+        for (int j = 0; j < p; j++)
+        {
+            mat3[i][j] = 0;
+            for (int k = 0; k < m; k++)
+            {
+                mat3[i][j] += mat1[i][k] * mat2[k][j];
+            }
+        }
+    }
+
+    return mat3;
+}
 /*End Matrix Operations Section*/
 
 /*Start Menus Section*/
@@ -175,7 +207,7 @@ void mainMenu()
         printf("1. Add Two Matrices.\n");
         printf("2. Subtract Two Matrices.\n");
         printf("3. Multiply Two Matrices\n");
-        printf("4. Multiply a Matrix By a Constant.\n");
+        printf("4. Multiply a Matrix By a Scalar.\n");
         printf("5. Find Determinant.\n");
         printf("6. Find Transpose Matrix.\n");
         printf("7. Find Inverse Matrix.\n");
@@ -194,10 +226,10 @@ void mainMenu()
             addTwoMatricesMenu();
             break;
         case 2:
-            SubtractTwoMatricesMenu();
+            subtractTwoMatricesMenu();
             break;
         case 3:
-            /* code */
+            multiplyTwoMatricesMenu();
             break;
         case 4:
             /* code */
@@ -228,7 +260,7 @@ void addTwoMatricesMenu()
     if (A == NULL)
     {
         printf("Memory allocation failed!\n");
-        mainMenu();
+        return;
     }
     printf("Fill the matrix A:\n");
     fillMatrix(A, rows, cols, 'A');
@@ -237,7 +269,7 @@ void addTwoMatricesMenu()
     if (B == NULL)
     {
         printf("Memory allocation failed!\n");
-        mainMenu();
+        return;
     }
     printf("Fill the matrix B:\n");
     fillMatrix(B, rows, cols, 'B');
@@ -246,7 +278,7 @@ void addTwoMatricesMenu()
     if (C == NULL)
     {
         printf("Memory allocation failed!\n");
-        mainMenu();
+        return;
     }
 
     freeMatrix(&A, rows);
@@ -256,7 +288,7 @@ void addTwoMatricesMenu()
     freeMatrix(&C, rows);
 }
 
-void SubtractTwoMatricesMenu()
+void subtractTwoMatricesMenu()
 {
     int rows, cols;
     printf("\n**** Subtract Two Matrices ****\n");
@@ -266,7 +298,7 @@ void SubtractTwoMatricesMenu()
     if (A == NULL)
     {
         printf("Memory allocation failed!\n");
-        mainMenu();
+        return;
     }
     printf("Fill the matrix A:\n");
     fillMatrix(A, rows, cols, 'A');
@@ -275,23 +307,85 @@ void SubtractTwoMatricesMenu()
     if (B == NULL)
     {
         printf("Memory allocation failed!\n");
-        mainMenu();
+        return;
     }
     printf("Fill the matrix B:\n");
     fillMatrix(B, rows, cols, 'B');
 
-    float **C = SubtractTwoMatrices(A, B, rows, cols);
+    float **C = subtractTwoMatrices(A, B, rows, cols);
     if (C == NULL)
     {
         printf("Memory allocation failed!\n");
-        mainMenu();
+        return;
     }
-
 
     freeMatrix(&A, rows);
     freeMatrix(&B, rows);
     printf("The result:\n");
     displayMatrix(C, rows, cols);
     freeMatrix(&C, rows);
+}
+
+void multiplyTwoMatricesMenu()
+{
+    int n, m, p;
+    printf("\n**** Multiply Two Matrices ****\n");
+    printf("A(n x m) x B(m x p)\n");
+
+    printf("Enter n (the number of rows of Matrix A): ");
+    scanf("%d", &n);
+    while (n <= 0)
+    {
+        printf("n must be greater than 0: ");
+        scanf("%d", &n);
+    }
+
+    printf("Enter m (the number of columns of Matrix A and the number of rows of matrix B): ");
+    scanf("%d", &m);
+    while (m <= 0)
+    {
+        printf("m must be greater than 0: ");
+        scanf("%d", &m);
+    }
+
+    printf("Enter p (the number of columns of Matrix B): ");
+    scanf("%d", &p);
+    while (p <= 0)
+    {
+        printf("p must be greater than 0: ");
+        scanf("%d", &p);
+    }
+
+    float **A = allocateMatrix(n, m);
+    if (A == NULL)
+    {
+        printf("Memory allocation failed!\n");
+        return;
+    }
+    printf("Fill the matrix A:\n");
+    fillMatrix(A, n, m, 'A');
+
+    float **B = allocateMatrix(m, p);
+    if (B == NULL)
+    {
+        printf("Memory allocation failed!\n");
+        return;
+    }
+    printf("Fill the matrix B:\n");
+    fillMatrix(B, m, p, 'B');
+
+    float **C = multiplyTwoMatrices(A, B, n, m, p);
+    if (C == NULL)
+    {
+        printf("Memory allocation failed!\n");
+        return;
+    }
+
+    freeMatrix(&A, n);
+    freeMatrix(&B, m);
+    printf("The result:\n");
+    displayMatrix(C, n, p);
+    freeMatrix(&C, n);
+    
 }
 /*End Menus Section*/
