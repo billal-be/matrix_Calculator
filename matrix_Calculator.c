@@ -137,6 +137,26 @@ void freeMatrix(float ***mat, int rows)
     free(*mat);
     (*mat) = NULL;
 }
+
+// Function to extract a minor matrix by removing a specified row and column
+void getMinor(float **matrix, float **minor, int row, int col, int n)
+{
+    int r = 0, c = 0;
+    for (int i = 0; i < n; i++)
+    {
+        if (i == row)
+            continue; // Skip the specified row
+        c = 0;
+        for (int j = 0; j < n; j++)
+        {
+            if (j == col)
+                continue; // Skip the specified column
+            minor[r][c] = matrix[i][j];
+            c++;
+        }
+        r++;
+    }
+}
 /*End Helper Functions Section*/
 
 /*Start Matrix Operations Section*/
@@ -230,41 +250,26 @@ double calculateDeterminant(float **matrix, int n)
         return (matrix[0][0] * matrix[1][1]) - (matrix[0][1] * matrix[1][0]);
     }
 
-    float determinant = 0;
+    double determinant = 0;
+    float **subMatrix = (float **)malloc((n - 1) * sizeof(float *));
+    for (int i = 0; i < n - 1; i++)
+    {
+        subMatrix[i] = (float *)malloc((n - 1) * sizeof(float));
+    }
 
     for (int col = 0; col < n; col++)
     {
-        // Create a submatrix (Minor) by removing the first row and the current column
-        float **subMatrix = (float **)malloc((n - 1) * sizeof(float *));
-        for (int i = 0; i < n - 1; i++)
-        {
-            subMatrix[i] = (float *)malloc((n - 1) * sizeof(float));
-        }
-
-        // Fill the submatrix by excluding the first row and the selected column
-        for (int i = 1; i < n; i++)
-        {
-            int subCol = 0;
-            for (int j = 0; j < n; j++)
-            {
-                if (j == col)
-                    continue; // Skip the selected column
-                subMatrix[i - 1][subCol] = matrix[i][j];
-                subCol++;
-            }
-        }
-
-        // Apply Laplace expansion along the first row
-        float cofactor = (col % 2 == 0 ? 1 : -1) * matrix[0][col] * calculateDeterminant(subMatrix, n - 1);
+        getMinor(matrix, subMatrix, 0, col, n); // Get the minor matrix
+        double cofactor = (col % 2 == 0 ? 1 : -1) * matrix[0][col] * calculateDeterminant(subMatrix, n - 1);
         determinant += cofactor;
-
-        // Free allocated memory for the submatrix
-        for (int i = 0; i < n - 1; i++)
-        {
-            free(subMatrix[i]);
-        }
-        free(subMatrix);
     }
+
+    // Free allocated memory for the submatrix
+    for (int i = 0; i < n - 1; i++)
+    {
+        free(subMatrix[i]);
+    }
+    free(subMatrix);
 
     return determinant;
 }
@@ -303,8 +308,9 @@ void mainMenu()
         printf("4. Multiply a Matrix By a Scalar.\n");
         printf("5. Calculate Determinant.\n");
         printf("6. Calculate Transpose Matrix.\n");
-        printf("7. Calculate Inverse Matrix.\n");
-        printf("8. Exit.\n");
+        printf("7. Calculate Adjugate Matrix.\n");
+        printf("8. Calculate Inverse Matrix.\n");
+        printf("9. Exit.\n");
         printf("Enter your choice: ");
         scanf("%d", &choice);
         while (choice < 1 || choice > 8)
@@ -571,5 +577,9 @@ void calculateTransposeMatrixMenu()
     printf("The result:\n");
     displayMatrix(transmat, cols, rows);
     freeMatrix(&transmat, cols);
+}
+
+void calculateAdjugateMatrixMenu()
+{
 }
 /*End Menus Section*/
