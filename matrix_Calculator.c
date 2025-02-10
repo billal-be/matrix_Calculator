@@ -17,6 +17,7 @@ float **subtractTwoMatrices(float **mat1, float **mat2, int rows, int cols);
 float **multiplyTwoMatrices(float **mat1, float **mat2, int n, int m, int p);
 float **multiplyMatrixByScalar(float **mat, float k, int rows, int cols);
 double calculateDeterminant(float **matrix, int n);
+float **calculateTransposeMatrix(float **mat, int rows, int cols);
 /*End Matrix Operations Section*/
 
 /*Start Menus Section*/
@@ -25,6 +26,7 @@ void subtractTwoMatricesMenu();
 void multiplyTwoMatricesMenu();
 void multiplyMatrixByScalarMenu();
 void calculateDeterminantMenu();
+void calculateTransposeMatrixMenu();
 void mainMenu();
 
 /*End Menus Section*/
@@ -143,7 +145,6 @@ float **addTwoMatrices(float **mat1, float **mat2, int rows, int cols)
     float **mat3 = allocateMatrix(rows, cols);
     if (mat3 == NULL)
     {
-        printf("Memory allocation failed!\n");
         return NULL;
     }
 
@@ -162,7 +163,6 @@ float **subtractTwoMatrices(float **mat1, float **mat2, int rows, int cols)
     float **mat3 = allocateMatrix(rows, cols);
     if (mat3 == NULL)
     {
-        printf("Memory allocation failed!\n");
         return NULL;
     }
 
@@ -181,7 +181,6 @@ float **multiplyTwoMatrices(float **mat1, float **mat2, int n, int m, int p)
     float **mat3 = allocateMatrix(n, p);
     if (mat3 == NULL)
     {
-        printf("Memory allocation failed!\n");
         return NULL;
     }
 
@@ -205,7 +204,6 @@ float **multiplyMatrixByScalar(float **mat, float k, int rows, int cols)
     float **result = allocateMatrix(rows, cols);
     if (result == NULL)
     {
-        printf("Memory allocation failed!\n");
         return NULL;
     }
 
@@ -270,6 +268,25 @@ double calculateDeterminant(float **matrix, int n)
 
     return determinant;
 }
+
+float **calculateTransposeMatrix(float **mat, int rows, int cols)
+{
+    float **transMat = allocateMatrix(cols, rows);
+    if (transMat == NULL)
+    {
+        return NULL;
+    }
+
+    for (int i = 0; i < cols; i++)
+    {
+        for (int j = 0; j < rows; j++)
+        {
+            transMat[i][j] = mat[j][i];
+        }
+    }
+
+    return transMat;
+}
 /*End Matrix Operations Section*/
 
 /*Start Menus Section*/
@@ -314,7 +331,7 @@ void mainMenu()
             calculateDeterminantMenu();
             break;
         case 6:
-            /* code */
+            calculateTransposeMatrixMenu();
             break;
         case 7:
             /* code */
@@ -526,5 +543,33 @@ void calculateDeterminantMenu()
     double det = calculateDeterminant(A, n);
     printf("Det( A ) = %.2f\n", det);
     freeMatrix(&A, n);
+}
+
+void calculateTransposeMatrixMenu()
+{
+    int rows, cols;
+    printf("\n**** Calculate Transpose Matrix ****\n");
+    printf("Transpose( A(n x m) )\n");
+    getMatrixSize(&rows, &cols);
+    float **A = allocateMatrix(rows, cols);
+    if (A == NULL)
+    {
+        printf("Memory allocation failed!\n");
+        return;
+    }
+    printf("Fill the matrix A:\n");
+    fillMatrix(A, rows, cols, 'A');
+
+    float **transmat = calculateTransposeMatrix(A, rows, cols);
+    if (transmat == NULL)
+    {
+        printf("Memory allocation failed!\n");
+        return;
+    }
+
+    freeMatrix(&A, rows);
+    printf("The result:\n");
+    displayMatrix(transmat, cols, rows);
+    freeMatrix(&transmat, cols);
 }
 /*End Menus Section*/
