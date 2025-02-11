@@ -9,6 +9,7 @@ float **allocateMatrix(int rows, int cols);
 void fillMatrix(float **mat, int rows, int cols, char matName);
 void displayMatrix(float **mat, int rows, int cols);
 void freeMatrix(float ***mat, int rows);
+void getMinor(float **matrix, float **minor, int row, int col, int n);
 /*End Helper Functions Section*/
 
 /*Start Matrix Operations Section*/
@@ -16,8 +17,9 @@ float **addTwoMatrices(float **mat1, float **mat2, int rows, int cols);
 float **subtractTwoMatrices(float **mat1, float **mat2, int rows, int cols);
 float **multiplyTwoMatrices(float **mat1, float **mat2, int n, int m, int p);
 float **multiplyMatrixByScalar(float **mat, float k, int rows, int cols);
-double calculateDeterminant(float **matrix, int n);
+float calculateDeterminant(float **matrix, int n);
 float **calculateTransposeMatrix(float **mat, int rows, int cols);
+float **calculateCofactorMatrix(float **matrix, int n);
 /*End Matrix Operations Section*/
 
 /*Start Menus Section*/
@@ -27,6 +29,7 @@ void multiplyTwoMatricesMenu();
 void multiplyMatrixByScalarMenu();
 void calculateDeterminantMenu();
 void calculateTransposeMatrixMenu();
+void calculateCofactorMatrixMenu();
 void mainMenu();
 
 /*End Menus Section*/
@@ -141,12 +144,12 @@ void freeMatrix(float ***mat, int rows)
 // Function to extract a minor matrix by removing a specified row and column
 void getMinor(float **matrix, float **minor, int row, int col, int n)
 {
-    int r = 0, c = 0;
+    int r = 0;
     for (int i = 0; i < n; i++)
     {
         if (i == row)
             continue; // Skip the specified row
-        c = 0;
+        int c = 0;
         for (int j = 0; j < n; j++)
         {
             if (j == col)
@@ -238,7 +241,7 @@ float **multiplyMatrixByScalar(float **mat, float k, int rows, int cols)
     return result;
 }
 
-double calculateDeterminant(float **matrix, int n)
+float calculateDeterminant(float **matrix, int n)
 {
     if (n == 1)
     {
@@ -250,7 +253,7 @@ double calculateDeterminant(float **matrix, int n)
         return (matrix[0][0] * matrix[1][1]) - (matrix[0][1] * matrix[1][0]);
     }
 
-    double determinant = 0;
+    float determinant = 0;
     float **subMatrix = (float **)malloc((n - 1) * sizeof(float *));
     for (int i = 0; i < n - 1; i++)
     {
@@ -260,7 +263,7 @@ double calculateDeterminant(float **matrix, int n)
     for (int col = 0; col < n; col++)
     {
         getMinor(matrix, subMatrix, 0, col, n); // Get the minor matrix
-        double cofactor = (col % 2 == 0 ? 1 : -1) * matrix[0][col] * calculateDeterminant(subMatrix, n - 1);
+        float cofactor = (col % 2 == 0 ? 1 : -1) * matrix[0][col] * calculateDeterminant(subMatrix, n - 1);
         determinant += cofactor;
     }
 
@@ -292,6 +295,43 @@ float **calculateTransposeMatrix(float **mat, int rows, int cols)
 
     return transMat;
 }
+
+float **calculateCofactorMatrix(float **matrix, int n)
+{
+    float **C = allocateMatrix(n, n);
+    if (n == 1)
+    {
+        C[0][0] = 1; // For a 1x1 matrix, the adjugate is simply 1
+        return C;
+    }
+
+    // Allocate memory for the minor matrix
+    float **minor = (float **)malloc((n - 1) * sizeof(float *));
+    for (int i = 0; i < n - 1; i++)
+    {
+        minor[i] = (float *)malloc((n - 1) * sizeof(float));
+    }
+
+    // Compute cofactors and fill the adjugate matrix (transpose of cofactor matrix)
+    for (int i = 0; i < n; i++)
+    {
+        for (int j = 0; j < n; j++)
+        {
+            getMinor(matrix, minor, i, j, n);
+            C[i][j] = ((i + j) % 2 == 0 ? 1 : -1) * calculateDeterminant(minor, n - 1);
+        }
+    }
+
+    // Free allocated memory for the minor matrix
+    for (int i = 0; i < n - 1; i++)
+    {
+        free(minor[i]);
+    }
+    free(minor);
+
+    return C;
+}
+
 /*End Matrix Operations Section*/
 
 /*Start Menus Section*/
@@ -308,12 +348,13 @@ void mainMenu()
         printf("4. Multiply a Matrix By a Scalar.\n");
         printf("5. Calculate Determinant.\n");
         printf("6. Calculate Transpose Matrix.\n");
-        printf("7. Calculate Adjugate Matrix.\n");
-        printf("8. Calculate Inverse Matrix.\n");
-        printf("9. Exit.\n");
+        printf("7. Calculate Cofactor Matrix.\n");
+        printf("8. Calculate Adjugate Matrix.\n");
+        printf("9. Calculate Inverse Matrix.\n");
+        printf("10. Exit.\n");
         printf("Enter your choice: ");
         scanf("%d", &choice);
-        while (choice < 1 || choice > 8)
+        while (choice < 1 || choice > 10)
         {
             printf("Error: please enter a valid option from the menu!: ");
             scanf("%d", &choice);
@@ -340,9 +381,15 @@ void mainMenu()
             calculateTransposeMatrixMenu();
             break;
         case 7:
-            /* code */
+            calculateCofactorMatrixMenu();
             break;
         case 8:
+            /* code */
+            break;
+        case 9:
+            /* code */
+            break;
+        case 10:
             exit(0);
             break;
         }
@@ -546,7 +593,7 @@ void calculateDeterminantMenu()
     printf("Fill the matrix A:\n");
     fillMatrix(A, n, n, 'A');
 
-    double det = calculateDeterminant(A, n);
+    float det = calculateDeterminant(A, n);
     printf("Det( A ) = %.2f\n", det);
     freeMatrix(&A, n);
 }
@@ -579,7 +626,33 @@ void calculateTransposeMatrixMenu()
     freeMatrix(&transmat, cols);
 }
 
-void calculateAdjugateMatrixMenu()
+void calculateCofactorMatrixMenu()
 {
+    int n;
+    printf("\n**** Calculate Cofactor Matrix ****\n");
+    printf("Cofactor( A(n x n) )\n");
+    printf("Enter n (the size of the matrix A): ");
+    scanf("%d", &n);
+    while (n <= 0)
+    {
+        printf("n must be greater than 0: ");
+        scanf("%d", &n);
+    }
+
+    float **A = allocateMatrix(n, n);
+    if (A == NULL)
+    {
+        printf("Memory allocation failed!\n");
+        return;
+    }
+    printf("Fill the matrix A:\n");
+    fillMatrix(A, n, n, 'A');
+
+    float **C = calculateCofactorMatrix(A, n);
+
+    freeMatrix(&A, n);
+    printf("The result:\n");
+    displayMatrix(C, n, n);
+    freeMatrix(&C, n);
 }
 /*End Menus Section*/
