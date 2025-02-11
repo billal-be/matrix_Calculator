@@ -30,6 +30,7 @@ void multiplyMatrixByScalarMenu();
 void calculateDeterminantMenu();
 void calculateTransposeMatrixMenu();
 void calculateCofactorMatrixMenu();
+void calculateAdjugateMatrixmenu();
 void mainMenu();
 
 /*End Menus Section*/
@@ -384,7 +385,7 @@ void mainMenu()
             calculateCofactorMatrixMenu();
             break;
         case 8:
-            /* code */
+            calculateAdjugateMatrixmenu();
             break;
         case 9:
             /* code */
@@ -649,6 +650,36 @@ void calculateCofactorMatrixMenu()
     fillMatrix(A, n, n, 'A');
 
     float **C = calculateCofactorMatrix(A, n);
+
+    freeMatrix(&A, n);
+    printf("The result:\n");
+    displayMatrix(C, n, n);
+    freeMatrix(&C, n);
+}
+
+void calculateAdjugateMatrixmenu()
+{
+    int n;
+    printf("\n**** Calculate Adjugate Matrix ****\n");
+    printf("Adjugate( A(n x n) )\n");
+    printf("Enter n (the size of the matrix A): ");
+    scanf("%d", &n);
+    while (n <= 0)
+    {
+        printf("n must be greater than 0: ");
+        scanf("%d", &n);
+    }
+
+    float **A = allocateMatrix(n, n);
+    if (A == NULL)
+    {
+        printf("Memory allocation failed!\n");
+        return;
+    }
+
+    printf("Fill the matrix A:\n");
+    fillMatrix(A, n, n, 'A');
+    float **C = calculateTransposeMatrix(calculateCofactorMatrix(A, n), n, n);
 
     freeMatrix(&A, n);
     printf("The result:\n");
