@@ -31,6 +31,7 @@ void calculateDeterminantMenu();
 void calculateTransposeMatrixMenu();
 void calculateCofactorMatrixMenu();
 void calculateAdjugateMatrixmenu();
+void calculateInverseMatrixMenu();
 void mainMenu();
 
 /*End Menus Section*/
@@ -388,7 +389,7 @@ void mainMenu()
             calculateAdjugateMatrixmenu();
             break;
         case 9:
-            /* code */
+            calculateInverseMatrixMenu();
             break;
         case 10:
             exit(0);
@@ -685,5 +686,42 @@ void calculateAdjugateMatrixmenu()
     printf("The result:\n");
     displayMatrix(C, n, n);
     freeMatrix(&C, n);
+}
+
+void calculateInverseMatrixMenu()
+{
+    int n;
+    printf("\n**** Calculate Inverse Matrix ****\n");
+    printf("Inverse( A(n x n) )\n");
+    printf("Enter n (the size of the matrix A): ");
+    scanf("%d", &n);
+    while (n <= 0)
+    {
+        printf("n must be greater than 0: ");
+        scanf("%d", &n);
+    }
+
+    float **A = allocateMatrix(n, n);
+    if (A == NULL)
+    {
+        printf("Memory allocation failed!\n");
+        return;
+    }
+    printf("Fill the matrix A:\n");
+    fillMatrix(A, n, n, 'A');
+
+    float det = calculateDeterminant(A, n);
+    if (det == 0)
+    {
+        printf("A is not singular (non-invertible).\n");
+        return;
+    }
+
+    float **Inv = multiplyMatrixByScalar(calculateTransposeMatrix(calculateCofactorMatrix(A, n), n, n), 1 / det, n, n);
+
+    freeMatrix(&A, n);
+    printf("The result:\n");
+    displayMatrix(Inv, n, n);
+    freeMatrix(&Inv, n);
 }
 /*End Menus Section*/
