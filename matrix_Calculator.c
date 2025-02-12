@@ -10,7 +10,7 @@ float **allocateMatrix(int rows, int cols);
 void fillMatrix(float **matrix, int rows, int cols, char matName);
 void displayMatrix(float **matrix, int rows, int cols);
 void freeMatrix(float ***matrix, int rows);
-void getMinor(float **matrix, float **minor, int row, int col, int n);
+void **getMinor(float **matrix, int row, int col, int n);
 /*End Helper Functions Section*/
 
 /*Start Matrix Operations Section*/
@@ -159,8 +159,9 @@ void freeMatrix(float ***matrix, int rows)
 }
 
 // Function to extract a minor matrix by removing a specified row and column
-void getMinor(float **matrix, float **minor, int row, int col, int n)
+void **getMinor(float **matrix, int row, int col, int n)
 {
+    float **minor = allocateMatrix(n-1, n-1);
     int r = 0;
     for (int i = 0; i < n; i++)
     {
@@ -176,6 +177,7 @@ void getMinor(float **matrix, float **minor, int row, int col, int n)
         }
         r++;
     }
+    return minor;
 }
 /*End Helper Functions Section*/
 
@@ -271,25 +273,25 @@ float computeDeterminant(float **matrix, int n)
     }
 
     float determinant = 0;
-    float **subMatrix = (float **)malloc((n - 1) * sizeof(float *));
+    float **minor = (float **)malloc((n - 1) * sizeof(float *));
     for (int i = 0; i < n - 1; i++)
     {
-        subMatrix[i] = (float *)malloc((n - 1) * sizeof(float));
+        minor[i] = (float *)malloc((n - 1) * sizeof(float));
     }
 
     for (int col = 0; col < n; col++)
     {
-        getMinor(matrix, subMatrix, 0, col, n); // Get the minor matrix
-        float cofactor = (col % 2 == 0 ? 1 : -1) * matrix[0][col] * computeDeterminant(subMatrix, n - 1);
+        minor = getMinor(matrix, 0, col, n); // Get the minor matrix
+        float cofactor = (col % 2 == 0 ? 1 : -1) * matrix[0][col] * computeDeterminant(minor, n - 1);
         determinant += cofactor;
     }
 
     // Free allocated memory for the submatrix
     for (int i = 0; i < n - 1; i++)
     {
-        free(subMatrix[i]);
+        free(minor[i]);
     }
-    free(subMatrix);
+    free(minor);
 
     return determinant;
 }
@@ -334,7 +336,7 @@ float **computeCofactorMatrix(float **matrix, int n)
     {
         for (int j = 0; j < n; j++)
         {
-            getMinor(matrix, minor, i, j, n);
+            minor = getMinor(matrix, i, j, n);
             C[i][j] = ((i + j) % 2 == 0 ? 1 : -1) * computeDeterminant(minor, n - 1);
         }
     }
