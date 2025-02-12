@@ -14,25 +14,25 @@ void getMinor(float **matrix, float **minor, int row, int col, int n);
 /*End Helper Functions Section*/
 
 /*Start Matrix Operations Section*/
-float **addTwoMatrices(float **mat1, float **mat2, int rows, int cols);
-float **subtractTwoMatrices(float **mat1, float **mat2, int rows, int cols);
-float **multiplyTwoMatrices(float **mat1, float **mat2, int n, int m, int p);
-float **multiplyMatrixByScalar(float **mat, float k, int rows, int cols);
-float calculateDeterminant(float **matrix, int n);
-float **calculateTransposeMatrix(float **matrix, int rows, int cols);
-float **calculateCofactorMatrix(float **matrix, int n);
+float **matrixAddition(float **mat1, float **mat2, int rows, int cols);
+float **matrixSubtraction(float **mat1, float **mat2, int rows, int cols);
+float **matrixMutiplication(float **mat1, float **mat2, int n, int m, int p);
+float **scalarMultiplication(float **mat, float k, int rows, int cols);
+float computeDeterminant(float **matrix, int n);
+float **computeTransposeMatrix(float **matrix, int rows, int cols);
+float **computeCofactorMatrix(float **matrix, int n);
 /*End Matrix Operations Section*/
 
 /*Start Menus Section*/
-void addTwoMatricesMenu();
-void subtractTwoMatricesMenu();
-void multiplyTwoMatricesMenu();
-void multiplyMatrixByScalarMenu();
-void calculateDeterminantMenu();
-void calculateTransposeMatrixMenu();
-void calculateCofactorMatrixMenu();
-void calculateAdjugateMatrixmenu();
-void calculateInverseMatrixMenu();
+void matrixAdditionMenu();
+void matrixSubtractionMenu();
+void matrixMutiplicationMenu();
+void scalarMultiplicationMenu();
+void computeDeterminantMenu();
+void computeTransposeMatrixMenu();
+void computeCofactorMatrixMenu();
+void computeAdjugateMatrixMenu();
+void computeInverseMatrixMenu();
 void mainMenu();
 
 /*End Menus Section*/
@@ -62,7 +62,7 @@ void scanReal(float *x)
 {
     while (scanf("%f", x) != 1)
     {
-        printf("Invalid input. Please enter a number.\n");
+        printf("Invalid input. Please enter a number: ");
         while (getchar() != '\n')
             ;
     }
@@ -72,7 +72,7 @@ void scanInteger(int *x)
 {
     while (scanf("%d", x) != 1)
     {
-        printf("Invalid input. Please enter an integer.\n");
+        printf("Invalid input. Please enter an integer: ");
         while (getchar() != '\n')
             ;
     }
@@ -130,7 +130,7 @@ void fillMatrix(float **matrix, int rows, int cols, char matName)
     {
         for (int j = 0; j < cols; j++)
         {
-            printf("%c[%d][%d] : ", matName, i+1, j+1);
+            printf("%c[%d][%d] : ", matName, i + 1, j + 1);
             scanReal(&matrix[i][j]);
         }
     }
@@ -180,7 +180,7 @@ void getMinor(float **matrix, float **minor, int row, int col, int n)
 /*End Helper Functions Section*/
 
 /*Start Matrix Operations Section*/
-float **addTwoMatrices(float **mat1, float **mat2, int rows, int cols)
+float **matrixAddition(float **mat1, float **mat2, int rows, int cols)
 {
     float **mat3 = allocateMatrix(rows, cols);
     if (mat3 == NULL)
@@ -198,7 +198,7 @@ float **addTwoMatrices(float **mat1, float **mat2, int rows, int cols)
     return mat3;
 }
 
-float **subtractTwoMatrices(float **mat1, float **mat2, int rows, int cols)
+float **matrixSubtraction(float **mat1, float **mat2, int rows, int cols)
 {
     float **mat3 = allocateMatrix(rows, cols);
     if (mat3 == NULL)
@@ -216,7 +216,7 @@ float **subtractTwoMatrices(float **mat1, float **mat2, int rows, int cols)
     return mat3;
 }
 
-float **multiplyTwoMatrices(float **mat1, float **mat2, int n, int m, int p)
+float **matrixMutiplication(float **mat1, float **mat2, int n, int m, int p)
 {
     float **mat3 = allocateMatrix(n, p);
     if (mat3 == NULL)
@@ -239,7 +239,7 @@ float **multiplyTwoMatrices(float **mat1, float **mat2, int n, int m, int p)
     return mat3;
 }
 
-float **multiplyMatrixByScalar(float **mat, float k, int rows, int cols)
+float **scalarMultiplication(float **mat, float k, int rows, int cols)
 {
     float **result = allocateMatrix(rows, cols);
     if (result == NULL)
@@ -258,7 +258,7 @@ float **multiplyMatrixByScalar(float **mat, float k, int rows, int cols)
     return result;
 }
 
-float calculateDeterminant(float **matrix, int n)
+float computeDeterminant(float **matrix, int n)
 {
     if (n == 1)
     {
@@ -280,7 +280,7 @@ float calculateDeterminant(float **matrix, int n)
     for (int col = 0; col < n; col++)
     {
         getMinor(matrix, subMatrix, 0, col, n); // Get the minor matrix
-        float cofactor = (col % 2 == 0 ? 1 : -1) * matrix[0][col] * calculateDeterminant(subMatrix, n - 1);
+        float cofactor = (col % 2 == 0 ? 1 : -1) * matrix[0][col] * computeDeterminant(subMatrix, n - 1);
         determinant += cofactor;
     }
 
@@ -294,7 +294,7 @@ float calculateDeterminant(float **matrix, int n)
     return determinant;
 }
 
-float **calculateTransposeMatrix(float **matrix, int rows, int cols)
+float **computeTransposeMatrix(float **matrix, int rows, int cols)
 {
     float **transMat = allocateMatrix(cols, rows);
     if (transMat == NULL)
@@ -313,7 +313,7 @@ float **calculateTransposeMatrix(float **matrix, int rows, int cols)
     return transMat;
 }
 
-float **calculateCofactorMatrix(float **matrix, int n)
+float **computeCofactorMatrix(float **matrix, int n)
 {
     float **C = allocateMatrix(n, n);
     if (n == 1)
@@ -335,7 +335,7 @@ float **calculateCofactorMatrix(float **matrix, int n)
         for (int j = 0; j < n; j++)
         {
             getMinor(matrix, minor, i, j, n);
-            C[i][j] = ((i + j) % 2 == 0 ? 1 : -1) * calculateDeterminant(minor, n - 1);
+            C[i][j] = ((i + j) % 2 == 0 ? 1 : -1) * computeDeterminant(minor, n - 1);
         }
     }
 
@@ -382,31 +382,31 @@ void mainMenu()
         switch (choice)
         {
         case 1:
-            addTwoMatricesMenu();
+            matrixAdditionMenu();
             break;
         case 2:
-            subtractTwoMatricesMenu();
+            matrixSubtractionMenu();
             break;
         case 3:
-            multiplyTwoMatricesMenu();
+            matrixMutiplicationMenu();
             break;
         case 4:
-            multiplyMatrixByScalarMenu();
+            scalarMultiplicationMenu();
             break;
         case 5:
-            calculateDeterminantMenu();
+            computeDeterminantMenu();
             break;
         case 6:
-            calculateTransposeMatrixMenu();
+            computeTransposeMatrixMenu();
             break;
         case 7:
-            calculateCofactorMatrixMenu();
+            computeCofactorMatrixMenu();
             break;
         case 8:
-            calculateAdjugateMatrixmenu();
+            computeAdjugateMatrixMenu();
             break;
         case 9:
-            calculateInverseMatrixMenu();
+            computeInverseMatrixMenu();
             break;
         case 0:
             exit(0);
@@ -415,7 +415,7 @@ void mainMenu()
     }
 }
 
-void addTwoMatricesMenu()
+void matrixAdditionMenu()
 {
     int rows, cols;
     printf("\n**** Add Two Matrices ****\n");
@@ -439,7 +439,7 @@ void addTwoMatricesMenu()
     printf("Fill the matrix B:\n");
     fillMatrix(B, rows, cols, 'B');
 
-    float **C = addTwoMatrices(A, B, rows, cols);
+    float **C = matrixAddition(A, B, rows, cols);
     if (C == NULL)
     {
         printf("Memory allocation failed!\n");
@@ -453,7 +453,7 @@ void addTwoMatricesMenu()
     freeMatrix(&C, rows);
 }
 
-void subtractTwoMatricesMenu()
+void matrixSubtractionMenu()
 {
     int rows, cols;
     printf("\n**** Subtract Two Matrices ****\n");
@@ -477,7 +477,7 @@ void subtractTwoMatricesMenu()
     printf("Fill the matrix B:\n");
     fillMatrix(B, rows, cols, 'B');
 
-    float **C = subtractTwoMatrices(A, B, rows, cols);
+    float **C = matrixSubtraction(A, B, rows, cols);
     if (C == NULL)
     {
         printf("Memory allocation failed!\n");
@@ -491,7 +491,7 @@ void subtractTwoMatricesMenu()
     freeMatrix(&C, rows);
 }
 
-void multiplyTwoMatricesMenu()
+void matrixMutiplicationMenu()
 {
     int n, m, p;
     printf("\n**** Multiply Two Matrices ****\n");
@@ -539,7 +539,7 @@ void multiplyTwoMatricesMenu()
     printf("Fill the matrix B:\n");
     fillMatrix(B, m, p, 'B');
 
-    float **C = multiplyTwoMatrices(A, B, n, m, p);
+    float **C = matrixMutiplication(A, B, n, m, p);
     if (C == NULL)
     {
         printf("Memory allocation failed!\n");
@@ -553,7 +553,7 @@ void multiplyTwoMatricesMenu()
     freeMatrix(&C, n);
 }
 
-void multiplyMatrixByScalarMenu()
+void scalarMultiplicationMenu()
 {
     int rows, cols;
     float k;
@@ -572,7 +572,7 @@ void multiplyMatrixByScalarMenu()
     printf("Enter the Scalar K: ");
     scanReal(&k);
 
-    float **result = multiplyMatrixByScalar(A, k, rows, cols);
+    float **result = scalarMultiplication(A, k, rows, cols);
     if (result == NULL)
     {
         printf("Memory allocation failed!\n");
@@ -585,7 +585,7 @@ void multiplyMatrixByScalarMenu()
     freeMatrix(&result, rows);
 }
 
-void calculateDeterminantMenu()
+void computeDeterminantMenu()
 {
     int n;
     printf("\n**** Calculate Determinant ****\n");
@@ -607,12 +607,12 @@ void calculateDeterminantMenu()
     printf("Fill the matrix A:\n");
     fillMatrix(A, n, n, 'A');
 
-    float det = calculateDeterminant(A, n);
+    float det = computeDeterminant(A, n);
     printf("Det( A ) = %.2f\n", det);
     freeMatrix(&A, n);
 }
 
-void calculateTransposeMatrixMenu()
+void computeTransposeMatrixMenu()
 {
     int rows, cols;
     printf("\n**** Calculate Transpose Matrix ****\n");
@@ -627,7 +627,7 @@ void calculateTransposeMatrixMenu()
     printf("Fill the matrix A:\n");
     fillMatrix(A, rows, cols, 'A');
 
-    float **transmat = calculateTransposeMatrix(A, rows, cols);
+    float **transmat = computeTransposeMatrix(A, rows, cols);
     if (transmat == NULL)
     {
         printf("Memory allocation failed!\n");
@@ -640,7 +640,7 @@ void calculateTransposeMatrixMenu()
     freeMatrix(&transmat, cols);
 }
 
-void calculateCofactorMatrixMenu()
+void computeCofactorMatrixMenu()
 {
     int n;
     printf("\n**** Calculate Cofactor Matrix ****\n");
@@ -662,7 +662,7 @@ void calculateCofactorMatrixMenu()
     printf("Fill the matrix A:\n");
     fillMatrix(A, n, n, 'A');
 
-    float **C = calculateCofactorMatrix(A, n);
+    float **C = computeCofactorMatrix(A, n);
 
     freeMatrix(&A, n);
     printf("The result:\n");
@@ -670,7 +670,7 @@ void calculateCofactorMatrixMenu()
     freeMatrix(&C, n);
 }
 
-void calculateAdjugateMatrixmenu()
+void computeAdjugateMatrixMenu()
 {
     int n;
     printf("\n**** Calculate Adjugate Matrix ****\n");
@@ -692,7 +692,7 @@ void calculateAdjugateMatrixmenu()
 
     printf("Fill the matrix A:\n");
     fillMatrix(A, n, n, 'A');
-    float **C = calculateTransposeMatrix(calculateCofactorMatrix(A, n), n, n);
+    float **C = computeTransposeMatrix(computeCofactorMatrix(A, n), n, n);
 
     freeMatrix(&A, n);
     printf("The result:\n");
@@ -700,7 +700,7 @@ void calculateAdjugateMatrixmenu()
     freeMatrix(&C, n);
 }
 
-void calculateInverseMatrixMenu()
+void computeInverseMatrixMenu()
 {
     int n;
     printf("\n**** Calculate Inverse Matrix ****\n");
@@ -722,14 +722,14 @@ void calculateInverseMatrixMenu()
     printf("Fill the matrix A:\n");
     fillMatrix(A, n, n, 'A');
 
-    float det = calculateDeterminant(A, n);
+    float det = computeDeterminant(A, n);
     if (det == 0)
     {
         printf("A is not singular (non-invertible).\n");
         return;
     }
 
-    float **Inv = multiplyMatrixByScalar(calculateTransposeMatrix(calculateCofactorMatrix(A, n), n, n), 1 / det, n, n);
+    float **Inv = scalarMultiplication(computeTransposeMatrix(computeCofactorMatrix(A, n), n, n), 1 / det, n, n);
 
     freeMatrix(&A, n);
     printf("The result:\n");
