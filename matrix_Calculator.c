@@ -3,6 +3,8 @@
 
 /*Start Helper Functions Section*/
 void displayAsciiArt();
+void scanReal(float *x);
+void scanInteger(int *x);
 void getMatrixSize(int *rows, int *cols);
 float **allocateMatrix(int rows, int cols);
 void fillMatrix(float **matrix, int rows, int cols, char matName);
@@ -56,50 +58,70 @@ void displayAsciiArt()
     printf(" \\____\\__,_|_|\\___|\\__,_|_|\\__,_|\\__\\___/|_|     \n");
 }
 
+void scanReal(float *x)
+{
+    while (scanf("%f", x) != 1)
+    {
+        printf("Invalid input. Please enter a number.\n");
+        while (getchar() != '\n')
+            ;
+    }
+}
+
+void scanInteger(int *x)
+{
+    while (scanf("%d", x) != 1)
+    {
+        printf("Invalid input. Please enter an integer.\n");
+        while (getchar() != '\n')
+            ;
+    }
+}
+
 void getMatrixSize(int *rows, int *cols)
 {
     printf("Enter the number of rows: ");
-    scanf("%d", rows);
+    scanInteger(rows);
     while ((*rows) <= 0)
     {
         printf("The number of rows must be greater than 0: ");
-        scanf("%d", rows);
+        scanInteger(rows);
     }
 
     printf("Enter the number of columns: ");
-    scanf("%d", cols);
+    scanInteger(cols);
     while ((*cols) <= 0)
     {
         printf("The number of columns must be greater than 0: ");
-        scanf("%d", cols);
+        scanInteger(cols);
     }
 }
 
 float **allocateMatrix(int rows, int cols)
 {
-    float **mat = (float **)malloc(rows * sizeof(float *));
-    if (mat == NULL)
+    float **matrix = (float **)malloc(rows * sizeof(float *));
+    if (matrix == NULL)
     {
         return NULL;
     }
 
     for (int i = 0; i < rows; i++)
     {
-        mat[i] = (float *)malloc(cols * sizeof(float));
-        if (mat[i] == NULL)
+        matrix[i] = (float *)malloc(cols * sizeof(float));
+        if (matrix[i] == NULL)
         {
             // Free all previously allocated memory before returning NULL
             for (int j = 0; j < i; j++)
             {
-                free(mat[j]);
+                free(matrix[j]);
             }
-            free(mat);
-            mat = NULL;
+            free(matrix);
+            matrix = NULL;
             return NULL;
         }
     }
 
-    return mat;
+    return matrix;
 }
 
 void fillMatrix(float **matrix, int rows, int cols, char matName)
@@ -108,14 +130,8 @@ void fillMatrix(float **matrix, int rows, int cols, char matName)
     {
         for (int j = 0; j < cols; j++)
         {
-            printf("%c[%d][%d] : ", matName, i + 1, j + 1);
-            if (scanf("%f", &matrix[i][j]) != 1)
-            {
-                printf("Invalid input. Please enter a number.\n");
-                j--; // Retry input for the same element
-                while (getchar() != '\n')
-                    ; // Clear input buffer
-            }
+            printf("%c[%d][%d] : ", matName, i+1, j+1);
+            scanReal(&matrix[i][j]);
         }
     }
 }
@@ -482,7 +498,7 @@ void multiplyTwoMatricesMenu()
     printf("A(n x m) x B(m x p)\n");
 
     printf("Enter n (the number of rows of Matrix A): ");
-    scanf("%d", &n);
+    scanInteger(&n);
     while (n <= 0)
     {
         printf("n must be greater than 0: ");
@@ -490,7 +506,7 @@ void multiplyTwoMatricesMenu()
     }
 
     printf("Enter m (the number of columns of Matrix A and the number of rows of matrix B): ");
-    scanf("%d", &m);
+    scanInteger(&m);
     while (m <= 0)
     {
         printf("m must be greater than 0: ");
@@ -498,7 +514,7 @@ void multiplyTwoMatricesMenu()
     }
 
     printf("Enter p (the number of columns of Matrix B): ");
-    scanf("%d", &p);
+    scanInteger(&p);
     while (p <= 0)
     {
         printf("p must be greater than 0: ");
@@ -554,12 +570,7 @@ void multiplyMatrixByScalarMenu()
     fillMatrix(A, rows, cols, 'A');
 
     printf("Enter the Scalar K: ");
-    while (scanf("%f", &k) != 1)
-    {
-        printf("Invalid input. Please enter a number.\n");
-        while (getchar() != '\n')
-            ;
-    }
+    scanReal(&k);
 
     float **result = multiplyMatrixByScalar(A, k, rows, cols);
     if (result == NULL)
@@ -580,7 +591,7 @@ void calculateDeterminantMenu()
     printf("\n**** Calculate Determinant ****\n");
     printf("Det( A(n x n) )\n");
     printf("Enter n (the size of the matrix A): ");
-    scanf("%d", &n);
+    scanInteger(&n);
     while (n <= 0)
     {
         printf("n must be greater than 0: ");
@@ -635,7 +646,7 @@ void calculateCofactorMatrixMenu()
     printf("\n**** Calculate Cofactor Matrix ****\n");
     printf("Cofactor( A(n x n) )\n");
     printf("Enter n (the size of the matrix A): ");
-    scanf("%d", &n);
+    scanInteger(&n);
     while (n <= 0)
     {
         printf("n must be greater than 0: ");
@@ -665,7 +676,7 @@ void calculateAdjugateMatrixmenu()
     printf("\n**** Calculate Adjugate Matrix ****\n");
     printf("Adjugate( A(n x n) )\n");
     printf("Enter n (the size of the matrix A): ");
-    scanf("%d", &n);
+    scanInteger(&n);
     while (n <= 0)
     {
         printf("n must be greater than 0: ");
@@ -695,7 +706,7 @@ void calculateInverseMatrixMenu()
     printf("\n**** Calculate Inverse Matrix ****\n");
     printf("Inverse( A(n x n) )\n");
     printf("Enter n (the size of the matrix A): ");
-    scanf("%d", &n);
+    scanInteger(&n);
     while (n <= 0)
     {
         printf("n must be greater than 0: ");
