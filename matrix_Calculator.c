@@ -10,7 +10,7 @@ float **allocateMatrix(int rows, int cols);
 void fillMatrix(float **matrix, int rows, int cols, char matName);
 void displayMatrix(float **matrix, int rows, int cols);
 void freeMatrix(float ***matrix, int rows);
-void **getMinor(float **matrix, int row, int col, int n);
+float **getMinor(float **matrix, int row, int col, int n);
 /*End Helper Functions Section*/
 
 /*Start Matrix Operations Section*/
@@ -159,7 +159,7 @@ void freeMatrix(float ***matrix, int rows)
 }
 
 // Function to extract a minor matrix by removing a specified row and column
-void **getMinor(float **matrix, int row, int col, int n)
+float **getMinor(float **matrix, int row, int col, int n)
 {
     float **minor = allocateMatrix(n-1, n-1);
     int r = 0;
