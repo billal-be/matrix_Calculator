@@ -1,14 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <stdbool.h>
 
 /*Start Helper Functions Section*/
 void displayAsciiArt();
 void getMatrixSize(int *rows, int *cols);
 float **allocateMatrix(int rows, int cols);
-void fillMatrix(float **mat, int rows, int cols, char matName);
-void displayMatrix(float **mat, int rows, int cols);
-void freeMatrix(float ***mat, int rows);
+void fillMatrix(float **matrix, int rows, int cols, char matName);
+void displayMatrix(float **matrix, int rows, int cols);
+void freeMatrix(float ***matrix, int rows);
 void getMinor(float **matrix, float **minor, int row, int col, int n);
 /*End Helper Functions Section*/
 
@@ -18,7 +17,7 @@ float **subtractTwoMatrices(float **mat1, float **mat2, int rows, int cols);
 float **multiplyTwoMatrices(float **mat1, float **mat2, int n, int m, int p);
 float **multiplyMatrixByScalar(float **mat, float k, int rows, int cols);
 float calculateDeterminant(float **matrix, int n);
-float **calculateTransposeMatrix(float **mat, int rows, int cols);
+float **calculateTransposeMatrix(float **matrix, int rows, int cols);
 float **calculateCofactorMatrix(float **matrix, int n);
 /*End Matrix Operations Section*/
 
@@ -103,14 +102,14 @@ float **allocateMatrix(int rows, int cols)
     return mat;
 }
 
-void fillMatrix(float **mat, int rows, int cols, char matName)
+void fillMatrix(float **matrix, int rows, int cols, char matName)
 {
     for (int i = 0; i < rows; i++)
     {
         for (int j = 0; j < cols; j++)
         {
             printf("%c[%d][%d] : ", matName, i + 1, j + 1);
-            if (scanf("%f", &mat[i][j]) != 1)
+            if (scanf("%f", &matrix[i][j]) != 1)
             {
                 printf("Invalid input. Please enter a number.\n");
                 j--; // Retry input for the same element
@@ -121,26 +120,26 @@ void fillMatrix(float **mat, int rows, int cols, char matName)
     }
 }
 
-void displayMatrix(float **mat, int rows, int cols)
+void displayMatrix(float **matrix, int rows, int cols)
 {
     for (int i = 0; i < rows; i++)
     {
         for (int j = 0; j < cols; j++)
         {
-            printf("%.1f\t", mat[i][j]);
+            printf("%.1f\t", matrix[i][j]);
         }
         printf("\n");
     }
 }
 
-void freeMatrix(float ***mat, int rows)
+void freeMatrix(float ***matrix, int rows)
 {
     for (int i = 0; i < rows; i++)
     {
-        free((*mat)[i]);
+        free((*matrix)[i]);
     }
-    free(*mat);
-    (*mat) = NULL;
+    free(*matrix);
+    (*matrix) = NULL;
 }
 
 // Function to extract a minor matrix by removing a specified row and column
@@ -279,7 +278,7 @@ float calculateDeterminant(float **matrix, int n)
     return determinant;
 }
 
-float **calculateTransposeMatrix(float **mat, int rows, int cols)
+float **calculateTransposeMatrix(float **matrix, int rows, int cols)
 {
     float **transMat = allocateMatrix(cols, rows);
     if (transMat == NULL)
@@ -291,7 +290,7 @@ float **calculateTransposeMatrix(float **mat, int rows, int cols)
     {
         for (int j = 0; j < rows; j++)
         {
-            transMat[i][j] = mat[j][i];
+            transMat[i][j] = matrix[j][i];
         }
     }
 
@@ -341,22 +340,24 @@ void mainMenu()
 {
     int choice;
 
-    while (true)
+    while (1)
     {
-        printf("\n**** Main Menu ****\n");
-        printf("1. Add Two Matrices.\n");
-        printf("2. Subtract Two Matrices.\n");
-        printf("3. Multiply Two Matrices\n");
-        printf("4. Multiply a Matrix By a Scalar.\n");
-        printf("5. Calculate Determinant.\n");
-        printf("6. Calculate Transpose Matrix.\n");
-        printf("7. Calculate Cofactor Matrix.\n");
-        printf("8. Calculate Adjugate Matrix.\n");
-        printf("9. Calculate Inverse Matrix.\n");
-        printf("10. Exit.\n");
+        printf("\n\t    MAIN MENU\n");
+        printf("================================\n");
+        printf("[1] Matrix Addition.\n");
+        printf("[2] Matrix Subtraction.\n");
+        printf("[3] Matrix Mutiplication.\n");
+        printf("[4] Scalar Multiplication.\n");
+        printf("[5] Compute Determinant.\n");
+        printf("[6] Compute Transpose Matrix.\n");
+        printf("[7] Compute Cofactor Matrix.\n");
+        printf("[8] Compute Adjugate Matrix.\n");
+        printf("[9] Compute Inverse Matrix.\n");
+        printf("[0] Exit.\n");
+        printf("================================\n");
         printf("Enter your choice: ");
         scanf("%d", &choice);
-        while (choice < 1 || choice > 10)
+        while (choice < 0 || choice > 9)
         {
             printf("Error: please enter a valid option from the menu!: ");
             scanf("%d", &choice);
@@ -391,7 +392,7 @@ void mainMenu()
         case 9:
             calculateInverseMatrixMenu();
             break;
-        case 10:
+        case 0:
             exit(0);
             break;
         }
