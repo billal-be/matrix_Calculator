@@ -283,7 +283,7 @@ float computeDeterminant(float **matrix, int n)
     }
 
     // Free allocated memory for the submatrix
-    freeMatrix(minor, n-1);
+    freeMatrix(&minor, n-1);
 
     return determinant;
 }
@@ -330,7 +330,7 @@ float **computeCofactorMatrix(float **matrix, int n)
     }
 
     // Free allocated memory for the minor matrix
-    freeMatrix(minor, n-1);
+    freeMatrix(&minor, n-1);
 
     return C;
 }
