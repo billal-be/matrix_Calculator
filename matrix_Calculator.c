@@ -273,11 +273,7 @@ float computeDeterminant(float **matrix, int n)
     }
 
     float determinant = 0;
-    float **minor = (float **)malloc((n - 1) * sizeof(float *));
-    for (int i = 0; i < n - 1; i++)
-    {
-        minor[i] = (float *)malloc((n - 1) * sizeof(float));
-    }
+    float **minor = allocateMatrix(n-1, n-1);
 
     for (int col = 0; col < n; col++)
     {
@@ -287,11 +283,7 @@ float computeDeterminant(float **matrix, int n)
     }
 
     // Free allocated memory for the submatrix
-    for (int i = 0; i < n - 1; i++)
-    {
-        free(minor[i]);
-    }
-    free(minor);
+    freeMatrix(minor, n-1);
 
     return determinant;
 }
@@ -325,11 +317,7 @@ float **computeCofactorMatrix(float **matrix, int n)
     }
 
     // Allocate memory for the minor matrix
-    float **minor = (float **)malloc((n - 1) * sizeof(float *));
-    for (int i = 0; i < n - 1; i++)
-    {
-        minor[i] = (float *)malloc((n - 1) * sizeof(float));
-    }
+    float **minor = allocateMatrix(n-1, n-1);
 
     // Compute cofactors and fill the adjugate matrix (transpose of cofactor matrix)
     for (int i = 0; i < n; i++)
@@ -342,11 +330,7 @@ float **computeCofactorMatrix(float **matrix, int n)
     }
 
     // Free allocated memory for the minor matrix
-    for (int i = 0; i < n - 1; i++)
-    {
-        free(minor[i]);
-    }
-    free(minor);
+    freeMatrix(minor, n-1);
 
     return C;
 }
