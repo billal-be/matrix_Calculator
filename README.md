@@ -33,7 +33,5 @@ Run the executable from the terminal:
 
 ### Screenshots
 Here's a screenshot of the program in action:
-```
-![Matrix Calculator Screenshot]([https://your-image-link.com/image.png](https://github.com/billal-be/matrix_Calculator/blob/main/media/Screenshot.png))
 
-```
+![Program Screenshot](https://github.com/billal-be/matrix_Calculator/blob/main/media/Screenshot.png)
