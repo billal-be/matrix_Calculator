@@ -14,8 +14,7 @@ A powerful command-line matrix calculator written in C. This program supports es
 ## Installation
 1. Clone this repository:
    ```sh
-   git clone https://github.com/billal-be/matrix_Calculator
-   cd matrix-calculator
+    git clone https://github.com/billal-be/matrix_calculator && cd matrix_calculator
    ```
 2. Ensure you have a C compiler (e.g., GCC) installed.
 
