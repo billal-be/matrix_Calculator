@@ -119,10 +119,11 @@ void fillMatrix(float **matrix, int rows, int cols, char matName) {
 
 void displayMatrix(float **matrix, int rows, int cols) {
   for (int i = 0; i < rows; i++) {
+    printf("| ");
     for (int j = 0; j < cols; j++) {
-      printf("%.1f\t", matrix[i][j]);
+      printf("%8.2f ", matrix[i][j]);
     }
-    printf("\n");
+    printf("|\n");
   }
 }
 
