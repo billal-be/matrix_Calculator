@@ -21,7 +21,7 @@ A powerful command-line matrix calculator written in C. This program supports es
 ## Compilation
 Compile the program using GCC:
 ```sh
-gcc matrix_Calculator.c -o matrix_calculator -lm
+gcc matrix_calculator.c -o matrix_calculator -lm
 ```
 
 ## Usage
